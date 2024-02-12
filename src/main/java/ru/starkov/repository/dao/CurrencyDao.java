@@ -1,0 +1,22 @@
+package ru.starkov.repository.dao;
+
+import ru.starkov.model.Currency;
+
+import java.util.List;
+import java.util.Optional;
+
+public interface CurrencyDao {
+    void save(Currency currency);
+
+    List<Currency> findAll();
+
+    Optional<Currency> findByCode(String code);
+
+    Optional<Currency> findByName(String fullName);
+
+    void update(Currency currency);
+
+    boolean exists(String code);
+
+
+}
