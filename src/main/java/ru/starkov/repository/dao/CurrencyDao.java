@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CurrencyDao {
-    void save(Currency currency);
+    Currency save(Currency currency);
 
     List<Currency> findAll();
 
