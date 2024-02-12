@@ -7,13 +7,13 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ExchangeRateDao {
-    void save(ExchangeRate exchangeRate);
+    ExchangeRate save(ExchangeRate exchangeRate);
 
     List<ExchangeRate> findAll();
 
     Optional<ExchangeRate> findByCurrencies(Currency baseCurrency, Currency targetCurrency);
 
-    Optional<ExchangeRate> findByCurrencyCodes(String codes);
+    Optional<ExchangeRate> findByCurrencyCodes(String baseCurrencyCode, String targetCurrencyCode);
 
     void update(ExchangeRate exchangeRate);
 
