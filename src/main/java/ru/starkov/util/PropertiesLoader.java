@@ -11,6 +11,9 @@ public class PropertiesLoader {
         loadProperties();
     }
 
+    private PropertiesLoader() {
+    }
+
     public static String get(String key) {
         return PROPERTIES.getProperty(key);
     }
@@ -21,8 +24,5 @@ public class PropertiesLoader {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private PropertiesLoader() {
     }
 }
