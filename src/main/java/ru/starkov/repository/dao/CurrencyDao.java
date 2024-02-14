@@ -12,8 +12,6 @@ public interface CurrencyDao {
 
     Optional<Currency> findByCode(String code);
 
-    Optional<Currency> findByName(String fullName);
-
     void update(Currency currency);
 
     boolean exists(String code);

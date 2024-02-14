@@ -2,12 +2,13 @@ package ru.starkov.service;
 
 import ru.starkov.model.Currency;
 import ru.starkov.repository.dao.CurrencyDao;
+import ru.starkov.repository.dao.impl.CurrencyDaoImpl;
+import ru.starkov.servlet.CurrencyServlet;
 
 import java.util.List;
 import java.util.Optional;
 
 public class CurrencyService {
-
     private final CurrencyDao currencyDao;
 
     public CurrencyService(CurrencyDao currencyDao) {
@@ -25,16 +26,12 @@ public class CurrencyService {
         return currencyDao.findByCode(code);
     }
 
-    public Optional<Currency> findByName(String fullName) {
-        if (fullName == null || fullName.isBlank()) {
-            throw new IllegalArgumentException("Full name cannot be null or blank");
-        }
-        return currencyDao.findByName(fullName);
-    }
-
     public Currency save(Currency currency) {
         if (currency == null) {
             throw new IllegalArgumentException("Currency cannot be null");
+        }
+        if (currencyDao.exists(currency.getCode())) {
+            throw new IllegalArgumentException("Currency already exist");
         }
         return currencyDao.save(currency);
     }
@@ -42,9 +39,6 @@ public class CurrencyService {
     public void update(Currency currency) {
         if (currency == null) {
             throw new IllegalArgumentException("Currency cannot be null");
-        }
-        if (currencyDao.exists(currency.getCode())) {
-            throw new IllegalArgumentException("Currency already exist");
         }
         currencyDao.update(currency);
     }
