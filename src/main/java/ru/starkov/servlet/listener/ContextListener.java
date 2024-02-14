@@ -1,6 +1,7 @@
 package ru.starkov.servlet.listener;
 
 import com.google.gson.Gson;
+import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
 import jakarta.servlet.annotation.WebListener;
@@ -10,6 +11,7 @@ import ru.starkov.repository.dao.impl.CurrencyDaoImpl;
 import ru.starkov.repository.dao.impl.ExchangeRateDaoImpl;
 import ru.starkov.service.CurrencyService;
 import ru.starkov.service.ExchangeRateService;
+import ru.starkov.servlet.mapper.CurrencyMapper;
 
 @WebListener
 public class ContextListener implements ServletContextListener {
@@ -25,15 +27,20 @@ public class ContextListener implements ServletContextListener {
     }
 
     private void initBeans(ServletContextEvent sce) {
+        ServletContext servletContext = sce.getServletContext();
+
         CurrencyDao currencyDao = CurrencyDaoImpl.getInstance();
         CurrencyService currencyService = new CurrencyService(currencyDao);
-        sce.getServletContext().setAttribute("currencyService", currencyService);
+        servletContext.setAttribute("currencyService", currencyService);
 
         ExchangeRateDao exchangeRateDao = ExchangeRateDaoImpl.getInstance();
         ExchangeRateService exchangeRateService = new ExchangeRateService(exchangeRateDao);
-        sce.getServletContext().setAttribute("exchangeRateService", exchangeRateService);
+        servletContext.setAttribute("exchangeRateService", exchangeRateService);
 
         Gson gson = new Gson();
-        sce.getServletContext().setAttribute("gson", gson);
+        servletContext.setAttribute("gson", gson);
+
+        CurrencyMapper currencyMapper = CurrencyMapper.INSTANCE;
+        servletContext.setAttribute("currencyMapper", currencyMapper);
     }
 }
