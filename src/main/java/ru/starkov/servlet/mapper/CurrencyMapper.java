@@ -1,6 +1,7 @@
 package ru.starkov.servlet.mapper;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 import ru.starkov.model.Currency;
 import ru.starkov.servlet.dto.CurrencyDto;
@@ -13,4 +14,7 @@ public interface CurrencyMapper {
     CurrencyMapper INSTANCE = Mappers.getMapper(CurrencyMapper.class);
     CurrencyDto toDto(Currency currency);
     List<CurrencyDto> collectionToDto(List<Currency> currencies);
+
+    @Mapping(target = "id", ignore = true)
+    Currency toModel(CurrencyDto currencyDto);
 }
