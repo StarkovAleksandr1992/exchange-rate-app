@@ -12,28 +12,23 @@ import java.util.Optional;
 public class CurrencyDaoImpl implements CurrencyDao {
 
     private static final String SAVE_SQL = """
-            INSERT INTO currencies (code, full_name, sign)
+            INSERT INTO currency_exchange_app.public.currencies (code, full_name, sign)
             VALUES (?, ?, ?);
             """;
     private static final String FIND_ALL_SQL = """
             SELECT id, code, full_name, sign
-            FROM currencies
+            FROM currency_exchange_app.public.currencies
             LIMIT 500;
             """;
 
     private static final String FIND_BY_CODE_SQL = """
             SELECT id, code, full_name, sign
-            FROM currencies
-            WHERE code = ?;
-            """;
-    private static final String FIND_BY_NAME_SQL = """
-            SELECT id, code, full_name, sign
-            FROM currencies
-            WHERE full_name = ?;
+            FROM currency_exchange_app.public.currencies
+            WHERE (LOWER(code)) = (LOWER(?));
             """;
 
     private static final String UPDATE_SQL = """
-            UPDATE currencies
+            UPDATE currency_exchange_app.public.currencies
             SET id = ?,
             code = ?,
             full_name = ?,
@@ -42,7 +37,7 @@ public class CurrencyDaoImpl implements CurrencyDao {
             """;
     private static final String EXISTS_SQL = """
             SELECT id
-            FROM currencies
+            FROM currency_exchange_app.public.currencies
             WHERE code = ?;
             """;
 
@@ -99,22 +94,6 @@ public class CurrencyDaoImpl implements CurrencyDao {
         try (var con = ConnectionManager.getConnection();
              var preparedStatement = con.prepareStatement(FIND_BY_CODE_SQL)) {
             preparedStatement.setString(1, code);
-            var resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                return Optional.of(mapResultSetToCurrency(resultSet));
-            } else {
-                return Optional.empty();
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public Optional<Currency> findByName(String fullName) {
-        try (var con = ConnectionManager.getConnection();
-             var preparedStatement = con.prepareStatement(FIND_BY_NAME_SQL)) {
-            preparedStatement.setString(1, fullName);
             var resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 return Optional.of(mapResultSetToCurrency(resultSet));
