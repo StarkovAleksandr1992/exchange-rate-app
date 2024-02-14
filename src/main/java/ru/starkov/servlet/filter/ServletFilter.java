@@ -1,11 +1,15 @@
 package ru.starkov.servlet.filter;
 
 import jakarta.servlet.*;
+import jakarta.servlet.annotation.WebFilter;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
+@WebFilter("/*")
 public class ServletFilter implements Filter {
+
+    private static final String CONTENT_TYPE = "application/json";
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -14,9 +18,10 @@ public class ServletFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        request.setCharacterEncoding(StandardCharsets.UTF_8);
-        response.setCharacterEncoding(StandardCharsets.UTF_8);
-        response.setContentType("application/json");
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType(CONTENT_TYPE);
+        chain.doFilter(request, response);
     }
 
     @Override
