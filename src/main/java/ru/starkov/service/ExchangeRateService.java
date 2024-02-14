@@ -35,7 +35,7 @@ public class ExchangeRateService {
     public void update(ExchangeRate exchangeRate) {
         if (exchangeRate == null) {
             throw new IllegalArgumentException("ExchangeRate cannot be null.");
-        } else if (exchangeRate.getRate().compareTo(BigDecimal.ZERO) < 0 || exchangeRate.getRate().compareTo(BigDecimal.ZERO) == 0) {
+        } else if (isExchangeRateValid(exchangeRate)) {
             throw new IllegalArgumentException("Exchange rate cannot be zero or negative.");
         }
         exchangeRateDao.update(exchangeRate);
@@ -44,9 +44,13 @@ public class ExchangeRateService {
     public ExchangeRate save(ExchangeRate exchangeRate) {
         if (exchangeRate == null) {
             throw new IllegalArgumentException("ExchangeRate cannot be null.");
-        } else if (exchangeRate.getRate().compareTo(BigDecimal.ZERO) < 0 || exchangeRate.getRate().compareTo(BigDecimal.ZERO) == 0) {
+        } else if (isExchangeRateValid(exchangeRate)) {
             throw new IllegalArgumentException("Exchange rate cannot be zero or negative.");
         }
         return exchangeRateDao.save(exchangeRate);
+    }
+
+    private static boolean isExchangeRateValid(ExchangeRate exchangeRate) {
+        return exchangeRate.getRate().compareTo(BigDecimal.ZERO) < 0 || exchangeRate.getRate().compareTo(BigDecimal.ZERO) == 0;
     }
 }
