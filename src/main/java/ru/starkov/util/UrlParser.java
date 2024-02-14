@@ -1,6 +1,7 @@
 package ru.starkov.util;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.Data;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -13,9 +14,9 @@ public class UrlParser {
     private UrlParser() {
     }
 
-    public static List<String> parseUrl(HttpServletRequest req) throws URISyntaxException {
+    public static List<QueryParameter> parseUrl(HttpServletRequest req) throws URISyntaxException {
         URI uri = new URI(req.getRequestURI());
-        List<String> segments = new ArrayList<>(decodePathSegments(uri.getPath()));
+        List<QueryParameter> segments = new ArrayList<>();
         String query = req.getQueryString();
         if (query != null) {
             segments.addAll(parseQueryParameters(query));
@@ -32,12 +33,11 @@ public class UrlParser {
         return segments;
     }
 
-    private static List<String> parseQueryParameters(String query) {
-        List<String> segments = new ArrayList<>();
+    private static List<QueryParameter> parseQueryParameters(String query) {
+        List<QueryParameter> segments = new ArrayList<>();
         for (String param : query.split("&")) {
             String[] nameValue = parseNameValue(param);
-            segments.add(nameValue[0]);
-            segments.add(nameValue[1]);
+            segments.add(new QueryParameter(nameValue[0], nameValue[1]));
         }
         return segments;
     }
@@ -49,4 +49,6 @@ public class UrlParser {
         }
         return new String[]{qParam.substring(0, pos), qParam.substring(pos + 1)};
     }
+
+    public record QueryParameter(String key, String value) {}
 }
