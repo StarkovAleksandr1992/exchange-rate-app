@@ -9,16 +9,19 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import ru.starkov.model.Currency;
 import ru.starkov.service.CurrencyService;
+import ru.starkov.servlet.dto.CurrencyDto;
 import ru.starkov.servlet.mapper.CurrencyMapper;
+import ru.starkov.util.UrlParser;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.List;
 import java.util.Optional;
 
 @WebServlet("/currencies/*")
 public class CurrencyServlet extends HttpServlet {
 
     private static final String CURRENCIES_PATH = "currencies";
-    private static final String CURRENCY_NOT_FOUND_MESSAGE = "Валюта не найдена";
 
     private CurrencyService currencyService;
     private CurrencyMapper currencyMapper;
@@ -49,22 +52,44 @@ public class CurrencyServlet extends HttpServlet {
         }
     }
 
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        try {
+            var currencyDto = new CurrencyDto();
+            currencyDto.setCode(req.getParameter("code"));
+            currencyDto.setSign(req.getParameter("sign"));
+            currencyDto.setFullname(req.getParameter("name"));
+            var currency = currencyMapper.toModel(currencyDto);
+            var currencyWithId = currencyService.save(currency);
+            resp.sendRedirect(req.getRequestURI()+ "/" + currencyWithId.getCode());
+
+        } catch (Exception e) {
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,  e.getMessage() + "Произошла ошибка, попробуйте выполнить запрос позднее");
+
+        }
+
+    }
+
     private void handleCurrencyListRequest(HttpServletResponse resp) throws IOException {
-        var currencies = currencyService.findAll();
-        var json = gson.toJson(currencyMapper.collectionToDto(currencies));
-        resp.getWriter().write(json);
-        resp.setStatus(HttpServletResponse.SC_OK);
+        try (var writer = resp.getWriter()) {
+            var currencies = currencyService.findAll();
+            var json = gson.toJson(currencyMapper.collectionToDto(currencies));
+            writer.write(json);
+            resp.setStatus(HttpServletResponse.SC_OK);
+        }
     }
 
     private void handleSingleCurrencyRequest(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        String code = req.getRequestURI().substring(req.getRequestURI().lastIndexOf("/") + 1);
-        Optional<Currency> currencyOptional = currencyService.findByCode(code);
-        if (currencyOptional.isEmpty()) {
-            resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Валюта с указанным кодом не найдена: " + code);
-            return;
+        try (var writer = resp.getWriter()) {
+            String code = req.getRequestURI().substring(req.getRequestURI().lastIndexOf("/") + 1);
+            Optional<Currency> currencyOptional = currencyService.findByCode(code);
+            if (currencyOptional.isEmpty()) {
+                resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Валюта с указанным кодом не найдена: " + code);
+                return;
+            }
+            var json = gson.toJson(currencyMapper.toDto(currencyOptional.get()));
+            writer.write(json);
+            resp.setStatus(HttpServletResponse.SC_OK);
         }
-        var json = gson.toJson(currencyMapper.toDto(currencyOptional.get()));
-        resp.getWriter().write(json);
-        resp.setStatus(HttpServletResponse.SC_OK);
     }
 }
