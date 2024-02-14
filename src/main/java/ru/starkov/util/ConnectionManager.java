@@ -4,6 +4,7 @@ import java.lang.reflect.Proxy;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -19,6 +20,11 @@ public class ConnectionManager {
     private static List<Connection> connections;
 
     static {
+        try {
+            Class.forName("org.postgresql.Driver");
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
         initConnectionPool();
     }
 
@@ -29,6 +35,7 @@ public class ConnectionManager {
         var poolSize = PropertiesLoader.get(POOL_SIZE);
         var size = poolSize == null ? DEFAULT_POOL_SIZE : Integer.parseInt(poolSize);
         pool = new ArrayBlockingQueue<>(size);
+        connections = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
             Connection connection = open();
             Connection proxyConnection = (Connection) Proxy.newProxyInstance(ConnectionManager.class.getClassLoader(),
