@@ -66,8 +66,10 @@ public class CurrencyDaoImpl implements CurrencyDao {
             preparedStatement.setString(3, currency.getSign());
             preparedStatement.executeUpdate();
             var generatedKeys = preparedStatement.getGeneratedKeys();
-            int id = generatedKeys.getInt("id");
-            currency.setId(id);
+            if (generatedKeys.next()) {
+                int id = generatedKeys.getInt("id");
+                currency.setId(id);
+            }
             return currency;
         } catch (SQLException e) {
             throw new RuntimeException(e);
