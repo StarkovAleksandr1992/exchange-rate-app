@@ -4,12 +4,12 @@ import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebFilter;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 
 @WebFilter("/*")
 public class ServletFilter implements Filter {
 
     private static final String CONTENT_TYPE = "application/json";
+    private static final String CHARSET = "UTF-8";
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -18,8 +18,8 @@ public class ServletFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        request.setCharacterEncoding("UTF-8");
-        response.setCharacterEncoding("UTF-8");
+        request.setCharacterEncoding(CHARSET);
+        response.setCharacterEncoding(CHARSET);
         response.setContentType(CONTENT_TYPE);
         chain.doFilter(request, response);
     }
