@@ -11,11 +11,8 @@ import ru.starkov.model.Currency;
 import ru.starkov.service.CurrencyService;
 import ru.starkov.servlet.dto.CurrencyDto;
 import ru.starkov.servlet.mapper.CurrencyMapper;
-import ru.starkov.util.UrlParser;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.List;
 import java.util.Optional;
 
 @WebServlet("/currencies/*")
@@ -37,7 +34,7 @@ public class CurrencyServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         try {
             String requestURI = req.getRequestURI();
             if (requestURI.endsWith(CURRENCIES_PATH)) {
@@ -53,7 +50,7 @@ public class CurrencyServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         try {
             var currencyDto = new CurrencyDto();
             currencyDto.setCode(req.getParameter("code"));
@@ -65,7 +62,6 @@ public class CurrencyServlet extends HttpServlet {
 
         } catch (Exception e) {
             resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,  e.getMessage() + "Произошла ошибка, попробуйте выполнить запрос позднее");
-
         }
 
     }
