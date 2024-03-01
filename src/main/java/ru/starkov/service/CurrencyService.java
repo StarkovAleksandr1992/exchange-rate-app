@@ -1,45 +1,34 @@
 package ru.starkov.service;
 
-import ru.starkov.model.Currency;
-import ru.starkov.repository.dao.CurrencyDao;
-import ru.starkov.repository.dao.impl.CurrencyDaoImpl;
-import ru.starkov.servlet.CurrencyServlet;
+import static ru.starkov.util.Constants.ERROR_CURRENCY_NOT_FOUND_MESSAGE;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.Objects;
+import lombok.RequiredArgsConstructor;
+import ru.starkov.dao.CurrencyDao;
+import ru.starkov.dto.CurrencyRequestDto;
+import ru.starkov.dto.mapper.CurrencyMapper;
+import ru.starkov.exception.CurrencyNotFoundException;
+import ru.starkov.model.Currency;
 
-public class CurrencyService {
-    private final CurrencyDao currencyDao;
+@RequiredArgsConstructor
+public final class CurrencyService {
 
-    public CurrencyService(CurrencyDao currencyDao) {
-        this.currencyDao = currencyDao;
-    }
+  private final CurrencyDao currencyDao;
 
-    public List<Currency> findAll() {
-        return currencyDao.findAll();
-    }
 
-    public Optional<Currency> findByCode(String code) {
-        if (code == null || code.isBlank()) {
-            throw new IllegalArgumentException("Code cannot be null or blank");
-        }
-        return currencyDao.findByCode(code);
-    }
+  public List<Currency> findAll() {
+    return currencyDao.findAll();
+  }
 
-    public Currency save(Currency currency) {
-        if (currency == null) {
-            throw new IllegalArgumentException("Currency cannot be null");
-        }
-        if (currencyDao.exists(currency.getCode())) {
-            throw new IllegalArgumentException("Currency already exist");
-        }
-        return currencyDao.save(currency);
-    }
+  public Currency findByCode(String code) throws CurrencyNotFoundException {
+    Objects.requireNonNull(code, "Currency code cannot ve null");
+    return currencyDao.findByCode(code).orElseThrow(() -> new CurrencyNotFoundException(
+        String.format(ERROR_CURRENCY_NOT_FOUND_MESSAGE, code)));
+  }
 
-    public void update(Currency currency) {
-        if (currency == null) {
-            throw new IllegalArgumentException("Currency cannot be null");
-        }
-        currencyDao.update(currency);
-    }
+  public Currency save(CurrencyRequestDto currencyRequestDto) {
+    Objects.requireNonNull(currencyRequestDto, "Currency cannot be null");
+    return currencyDao.save(CurrencyMapper.INSTANCE.toModel(currencyRequestDto));
+  }
 }
