@@ -6,13 +6,14 @@
 
     <groupId>ru.starkov</groupId>
     <artifactId>currency-exchange-app</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
     <packaging>war</packaging>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <war.name>currency-exchange-app</war.name>
     </properties>
 
 
@@ -56,10 +57,6 @@
     <build>
         <plugins>
             <plugin>
-                <artifactId>maven-war-plugin</artifactId>
-                <version>3.4.0</version>
-            </plugin>
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.11.0</version>
@@ -78,6 +75,21 @@
                     </annotationProcessorPaths>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.4.0</version>
+                <configuration>
+                    <outputDirectory>./target/webapp</outputDirectory>
+                    <warName>${war.name}</warName>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+
         </plugins>
     </build>
 </project>
