@@ -1,13 +1,21 @@
 package ru.starkov.model;
 
+import java.math.BigDecimal;
+import lombok.Builder;
 import lombok.Data;
 
-import java.math.BigDecimal;
-
+/**
+ * This class represents an exchange rate model. It contains the ID, links to the base and target
+ * currencies, and the rate.
+ *
+ * @see Currency
+ */
 @Data
-public class ExchangeRate {
-    private Integer id;
-    private Integer baseCurrencyId;
-    private Integer targetCurrencyId;
-    private BigDecimal rate;
+@Builder
+public final class ExchangeRate {
+
+  private Integer id;
+  private Currency baseCurrency;
+  private Currency targetCurrency;
+  private BigDecimal rate;
 }
